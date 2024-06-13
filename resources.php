@@ -11,7 +11,7 @@
     <h1>CS 451 Final Project Resources Page</h1>
 
     <h2>ER Diagram</h2>
-    <img src="<?php echo "ERD.png"; ?>" alt="ER Diagram">
+    <img id="er-diagram" src="<?php echo "ERD.png"; ?>" alt="ER Diagram">
 
     <h2>Front End Code</h2>
     <a href="txtFiles/index.txt" >Contents</a> of the index PHP page. <br>
