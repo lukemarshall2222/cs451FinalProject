@@ -11,6 +11,12 @@
     <h1>CS 451 Final Project Resources Page</h1>
 
     <h2>ER Diagram</h2>
+    <form action="index.php" method="get" class="home-button-form">
+        <button type="submit" class="home-button">
+            <img src="buttonImages/home-button.png" alt="Return Home" class="home-button-image">
+        </button>
+
+    </form>
     <img id="er-diagram" src="<?php echo "ERD.png"; ?>" alt="ER Diagram">
 
     <h2>Front End Code</h2>
