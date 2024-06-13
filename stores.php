@@ -63,7 +63,7 @@ $conn->close();
     <h1>Store Dashboard</h1>
     <form action="index.php" method="get" class="home-button-form"> 
         <button type="submit" class="home-button">
-            <img src="home-button.png" alt="Return Home" class="home-button-image">
+            <img src="buttonImages/home-button.png" alt="Return Home" class="home-button-image">
         </button>
     </form>
 
