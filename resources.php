@@ -14,7 +14,6 @@
         <button type="submit" class="home-button">
             <img src="buttonImages/home-button.png" alt="Return Home" class="home-button-image">
         </button>
-
     </form>
     <h2>ER Diagram</h2>
     <img id="er-diagram" src="<?php echo "ERD.png"; ?>" alt="ER Diagram">

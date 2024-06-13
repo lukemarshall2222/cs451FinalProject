@@ -9,6 +9,11 @@
 </head>
 <body>
     <h1>Tables and Their Contents</h1>
+    <form action="index.php" method="get" class="home-button-form">
+        <button type="submit" class="home-button">
+            <img src="buttonImages/home-button.png" alt="Return Home" class="home-button-image">
+        </button>
+    </form>
 
     <h2>fees Table</h2>
     <img src="<?php echo "tableImages/fees.png"; ?>" alt="fees table">
