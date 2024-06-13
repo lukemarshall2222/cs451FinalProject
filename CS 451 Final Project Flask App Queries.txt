@@ -1,0 +1,467 @@
+﻿Luke Marshall
+CS 451
+Spring 2024
+Queries in the Final Project
+
+
+Below is a list of SQL queries. These queries are the translation from the Python sqlalchemy ORM queries used in the back end Flask application to query the MYSQL database.
+
+
+ITEMS DASHBOARD QUERIES: Each of the items dashboard endpoints have two possible queries: the first is executed if a single item is chosen, the latter is executed if “All Items” is chosen from the items dropdown on the items dashboard.
+
+
+
+
+ORDERS:
+
+
+SELECT MONTH(o.date) AS orderMonth, COUNT(o.order_id) AS orderCount
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.order_id AND
+                             oi.item_id = selectedItem AND
+                             YEAR(o.date) = selectedYear
+GROUP BY orderMonth
+ORDER BY orderMonth
+
+
+
+
+SELECT i.item_id, i.name, COALESCE(COUNT(o.order_id), 0) AS orderCount
+FROM  items i
+LEFT JOIN order_items oi ON oi.item_id = i.item_id
+LEFT JOIN orders ON o.order_id = oi.order_id AND 
+  MONTH(o.date) = selectedMonth
+GROUP BY i.item_id, i.name
+ORDER BY i.item_id ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FEES:
+
+
+SELECT SUM(f.processing + f.transaction) AS totalFees,
+                MONTH(o.date) AS month
+FROM fees f
+JOIN orders ON f.order_id = o.order_id AND 
+   YEAR(o.date) = selectedYear
+JOIN order_items oi ON f.order_id = oi.order_id AND 
+     oi.item_id = selectedItem
+GROUP BY month
+
+
+
+
+SELECT COALESCE(SUM(f.processing + f.transaction), 0.00) AS totalFees,
+                i.name, i.item_id, MONTH(o.date) AS month
+FROM items i
+LEFT JOIN order_items oi ON oi.item_id = i.item_id
+LEFT JOIN orders o ON oi.order_id = o.order_id AND
+                              MONTH(o.date) = selectedMonth AND 
+     YEAR(o.date) = selectedYear
+LEFT JOIN fees f ON f.order_id = oi.order_id
+GROUP BY i.item_id, i.name, MONTH(o.date)
+ORDER BY i.item_id ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SHIPPING:
+
+
+SELECT SUM(sh.cost) AS cost, MONTH(o.date) AS month
+FROM order_items oi
+JOIN orders ON oi.order_id = o.order_id AND 
+                     oi.item_id = selectedItem
+JOIN shipping sh ON sh.order_id = o.order_id
+GROUP BY MONTH(o.date)
+
+
+
+
+SELECT COALESCE(SUM(sh.cost), 0.00) AS cost,  i.name,
+                i.item_id, MONTH(o.date) AS month
+FROM items i
+LEFT JOIN order_items oi ON
+                     i.item_id = oi.item_id
+LEFT JOIN orders o ON oi.order_id = o.order_id AND 
+     YEAR(o.date) = selectedYear AND 
+      MONTH(o.date) = selectedMonth
+LEFT JOIN shipping sh ON oi.order_id = sh.order_id
+GROUP BY i.item_id, i.name, MONTH(o.date)
+ORDER BY i.item_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VIEWS:
+
+
+SELECT is.num_views, is.month
+FROM item_stats is
+WHERE is.year = selectedYear AND 
+   is.item_id = selectedItem;
+
+
+
+
+SELECT COALESCE(SUM(is.num_views), 0) AS num_views,
+                 is.item_id, i.name
+FROM items i
+LEFT JOIN item_stats is ON i.item_id = is.item_id AND
+is.year = selectedYear AND 
+is.month = selectedMonth
+GROUP BY is.item_id, i.name
+ORDER BY is.item_id ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REVIEWS:
+
+
+SELECT AVG(r.num_stars) AS num_stars,
+                COUNT(r.item_id) AS num_reviews,
+               MONTH(o.date) AS month
+FROM review r
+JOIN orders o ON r.order_id = o.order_id AND
+                  r.item_id = selectedItem AND
+      YEAR(o.date) = selectedYear
+GROUP BY MONTH(o.date)
+ORDER BY month
+
+
+
+
+SELECT COALESCE(AVG(r.num_stars), 0) AS num_stars,
+                COUNT(r.item_id) AS num_reviews,
+                i.item_id, i.name, MONTH(o.date) AS month
+FROM items i
+LEFT JOIN review ON r.item_id = i.item_id
+LEFT JOIN orders o ON o.order_id = r.order_id AND 
+     YEAR(o.date) = selectedYear AND 
+     MONTH(o.date) = selectedMonth
+GROUP BY i.item_id, i.name, MONTH(o.date)
+ORDER BY i.item_id ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FAVORITES:
+
+
+SELECT is.num_favorites, is.month
+FROM item_stats is
+WHERE is.year = selectedYear AND 
+             is.item_id = selectedItem
+
+
+
+
+SELECT COALESCE(SUM(is.num_favorites), 0) AS num_favorites,
+                is.item_id, i.name
+FROM item i
+LEFT JOIN item_stats is ON i.item_id = is.item_id AND 
+                         is.year = selectedYear AND 
+is.month = selectedMonth
+GROUP BY is.item_id, i.name
+ORDER BY is.item_id ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STORE DASHBOARD QUERIES: Each of the store dashboard endpoints have a single possible query.
+
+
+
+
+REVIEWS:
+
+
+SELECT
+    COALESCE(AVG(r.num_stars), 0) AS num_stars,
+   (MONTH o.date) AS month
+FROM review r
+JOIN order o ON r.order_id = o.order_id AND 
+     YEAR(o.date) = selectedYear AND 
+     o.store_id = selectedStore
+GROUP BY MONTH(o.date)
+ORDER BY month
+
+
+
+
+FOLLOWS:
+
+
+SELECT ss.num_follows, ss.month
+FROM store_stats ss
+WHERE ss.store_id = selectedStore AND 
+            ss.year = selectedYear
+
+
+
+
+ORDERS:
+
+
+SELECT COUNT(o.order_id) AS order_count,
+               MONTH(o.date) AS month
+FROM orders o
+WHERE YEAR(o.date) = selectedYear AND 
+             o.store_id = selectedStore
+GROUP BY MONTH(o.date)
+ORDER BY month
+
+
+
+
+
+
+
+
+
+
+
+
+SALES TAX:
+
+
+SELECT SUM(st.amount) AS totalSTax,
+               MONTH(o.date) AS month
+FROM sales_tax st
+JOIN orders o ON st.order_id = o.order_id AND 
+      YEAR(o.date) = selectedYear AND 
+      o.store_id = selectedStore
+GROUP BY MONTH(o.date)
+ORDER BY month
+
+
+
+
+FEES:
+
+
+SELECT SUM(f.processing + f.transaction) AS totalFees,
+             MONTH(o.date) AS month
+FROM fees f
+JOIN orders o ON f.order_id = o.order_id AND
+      YEAR(o.date) = selectedYear AND 
+      o.store_id = selectedStore
+GROUP BY MONTH(o.date)
+ORDER BY month
+
+
+
+
+VISITS:
+
+
+SELECT ss.num_visits, ss.month
+FROM store_stats ss
+WHERE ss.store_id = selectedStore AND 
+            ss.year = selectedYear

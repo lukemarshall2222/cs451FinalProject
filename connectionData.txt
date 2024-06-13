@@ -1,0 +1,10 @@
+<?php
+
+$server = "ix.cs.uoregon.edu";
+$dbname ="EtsyStore";
+$user = "guest";
+$pass = "guest";
+$port="3607";
+$lightsailURL = "http://3.145.228.23:80"
+
+?>
