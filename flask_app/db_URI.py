@@ -1,1 +1,1 @@
-db_URI = 'mysql+mysqlconnector://guest:guest@ix.cs.uoregon.edu:3607/EtsyStore'
+
